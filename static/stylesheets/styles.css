@@ -1,0 +1,112 @@
+
+/* Inputs/forms */
+input[type=text], input[type=email], input[type=password], input[type=number], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+
+.colorRed {
+  color: red; 
+}
+
+body {
+  font-family : 'ヒラギノ角ゴ ProN' , 'Hiragino Kaku Gothic ProN' , '游ゴシック' , '游ゴシック体' , YuGothic , 'Yu Gothic' , 'メイリオ' , Meiryo , 'ＭＳ ゴシック' , 'MS Gothic' , HiraKakuProN-W3 , 'TakaoExゴシック' , TakaoExGothic , 'MotoyaLCedar' , 'Droid Sans Japanese' , sans-serif !important;
+  line-height: 1.75 !important;
+}
+
+#main {
+  z-index: -1;
+}
+
+.title {
+  font-family : 'ヒラギノ角ゴ ProN' , 'Hiragino Kaku Gothic ProN' , '游ゴシック' , '游ゴシック体' , YuGothic , 'Yu Gothic' , 'メイリオ' , Meiryo , 'ＭＳ ゴシック' , 'MS Gothic' , HiraKakuProN-W3 , 'TakaoExゴシック' , TakaoExGothic , 'MotoyaLCedar' , 'Droid Sans Japanese' , sans-serif !important;
+  font-size: 1.23em;
+}
+
+.blog-post {
+  font-size: 1.1em;
+  line-height: 1.7;
+  text-align: justify;
+}
+
+.center {
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+
+.welcome {
+  margin: auto;
+  width: 50%;
+  position: relative;
+  z-index: -1;
+}
+
+textarea {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer {
+z-index: 10;
+}
+
+
+/* Small-Medium devices */
+@media screen and (max-width: 992px) { 
+  body {
+    line-height: 1.6 !important;
+  }
+}
+
+
+/* Medium devices */
+@media screen and (min-width: 0px) { 
+.overlap {
+  margin-top: -30%;
+  background-color: white;
+  position: relative;;
+  z-index:1;
+  }
+}
+
+/* Large devices */
+@media screen and (min-width: 992px) { 
+  .overlap {
+    margin-top: -45%;
+    background-color: white;
+    position:relative;
+    padding-bottom:3%;
+  }
+
+  body {
+    font-size: 1.3rem !important;
+  }
+
+  .welcome {
+    max-width: 80%;
+    margin-top: -2%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    
+    } 
+}
+
+/* Small devices - For blog/profile page */
+@media screen and (max-width: 720px) { 
+.blog-post, h2 {
+  font-size: 1.2em;
+  line-height: 1.4;
+  text-align: justify;
+
+  }
+
+}
