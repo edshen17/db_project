@@ -41,7 +41,7 @@ const ReviewSchema = new Schema({
 
 const ItemSchema = new Schema({
   supplier: {
-    type: SupplierSchema,
+    type: String,
     required: true,
   },
   itemName: {
@@ -68,7 +68,6 @@ const ItemSchema = new Schema({
   lastEditedAt: {type: Date, default: Date.now, required: false},
   reviews: [ReviewSchema],
 });
-
 
 
 const Supplier = mongoose.model('supplier', SupplierSchema);

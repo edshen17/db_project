@@ -29,13 +29,13 @@ block content
             input#password2.form-control(type='password', name='password2', placeholder='Confirm Password', value=(password2))
             .form-group
             label(for='streetAddress') Street Address
-            input.form-control(type='streetAddress', name='streetAddress', value=(streetAddress))
+            input.form-control(type='text', name='streetAddress', value=(streetAddress))
           .form-group
             label(for='city') City
-            input.form-control(type='city', name='city', value=(city))
+            input.form-control(type='text', name='city', value=(city))
           .form-group
             label(for='state') State
-            input.form-control(type='state', name='state', value=(state))
+            input.form-control(type='text', name='state', value=(state))
           .form-group
             label(for='zip') Zip Code
             input.form-control(type='tel', pattern="[0-9\-]+" name='zip', value=(zip))

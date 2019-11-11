@@ -11,13 +11,13 @@ block content
         form(action='/admin/create-supplier', method='POST')
           .form-group
             label(for='supplierName') Supplier Name
-            input.form-control(type='supplierName', name='supplierName', value=(supplierName) required)
+            input.form-control(type='text', name='supplierName', value=(supplierName) required)
           .form-group
             label(for='supplierCity') Supplier HQ City
-            input.form-control(type='supplierCity', name='supplierCity', value=(supplierCity) required)
+            input.form-control(type='text', name='supplierCity', value=(supplierCity) required)
           .form-group
             label(for='supplierState') Supplier State
-            input.form-control(type='supplierState', name='supplierState', value=(supplierState) required)
+            input.form-control(type='text', name='supplierState', value=(supplierState) required)
           .form-group
             label(for='supplierPhone') Supplier Phone
             input.form-control(type='tel', pattern="[0-9\-]+" name='supplierPhone', value=(supplierPhone) required)

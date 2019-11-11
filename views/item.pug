@@ -10,27 +10,27 @@ block content
           include ./partials/messages
         form(action='/admin/create-item', method='POST')
           .form-group.form
-            label(for='supplierName')
+            label(for='supplier')
                 | Supplier
-                select(name='username')
+                select(name='supplier')
                     each supplier in supplierList
                         option.form-control(value= supplier.supplierName) #{supplier.supplierName}
           .form-group
             label(for='itemName') Item Name
-            input.form-control(type='itemName', name='itemName', value=(itemName) required)
+            input.form-control(type='text', name='itemName', value=(itemName) required)
           .form-group
             label(for='price') Price
-            input.form-control(type='price', name='price', value=(price) required)
+            input.form-control(type='number', name='price', value=(price) required)
           .form-group
             label(for='itemDescription') Item Description
             .md-form
-                textarea#textarea.md-textarea.form-control(rows='8' name='content')
+                textarea#textarea.md-textarea.form-control(rows='8' name='itemDescription')
           .form-group
             label(for='itemImageURL') Item Image URL
-            input.form-control(type='itemImageURL', name='itemImageURL', value=(itemImageURL) required)
+            input.form-control(type='text', name='itemImageURL', value=(itemImageURL) required)
           .form-group
             label(for='stock') Stock
-            input.form-control(type='itemImageURL', name='stock', value=(stock) required)
+            input.form-control(type='number', name='stock', value=(stock) required)
           button.btn.btn-primary.btn-block(type='submit')
             | Create Item
         script(src='/scripts/nicedit.js', type='text/javascript')

@@ -13,8 +13,6 @@ const {
   ObjectId,
 } = require('mongoose').Types;
 
-
-
 // GET /dashboard
 router.get('/dashboard', (req, res) => {
     const title = 'Admin | Dashboard';
@@ -34,6 +32,7 @@ router.get('/create-supplier', (req, res) => {
   // POST /
   // Route to create a new supplier 
   router.post('/create-supplier', (req, res) => {
+    const errors = [];
     const {
       supplierName,
       supplierCity,
@@ -46,7 +45,6 @@ router.get('/create-supplier', (req, res) => {
       })
         .then((supplier) => {
           if (supplier) {
-            // supplier exists
             errors.push({
               msg: 'A supplier with that name already exists',
             });
@@ -86,8 +84,9 @@ router.get('/create-item', (req, res) => {
 });
 
 // POST /
-// Route to create a new supplier 
+// Route to create a new item 
 router.post('/create-item', (req, res) => {
+  const errors = [];
   const {
     supplierName,
     itemName,
@@ -96,7 +95,41 @@ router.post('/create-item', (req, res) => {
     itemImageURL,
     stock,
   } = req.body;
-  console.log(req.body);
+  Item.findOne({
+    supplierName,
+    itemName,
+  }).then((item) => {
+      if (item) {
+        errors.push({
+          msg: 'An item with that name already exists',
+        });
+        return Supplier.find().lean().then(suppliers => { // get all the suppliers
+          return res.render('item', {
+            errors,
+            supplierList: suppliers,
+            supplier: req.body.supplier,
+            itemName: req.body.itemName,
+            price: req.body.price,
+            itemDescription: itemDescription,
+            itemImageURL: req.body.itemImageURL,
+            stock: req.body.stock,
+          });
+        }); 
+      } else {
+        const newItem = new Item({
+            supplier: req.body.supplier,
+            itemName: req.body.itemName,
+            price: req.body.price,
+            itemDescription: itemDescription,
+            itemImageURL: req.body.itemImageURL,
+            stock: req.body.stock,
+        });
+        newItem.save((err) => {
+          if (err) next(err);
+           res.redirect('/dashboard');
+        });
+      }
+    });
 });
 
   module.exports = router;
