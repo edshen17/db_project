@@ -1,4 +1,3 @@
-/* eslint-disable */
 
 Vue.use(VueRouter);
 

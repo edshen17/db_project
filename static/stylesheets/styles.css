@@ -10,6 +10,11 @@ input[type=text], input[type=email], input[type=password], input[type=number], s
   box-sizing: border-box;
 }
 
+img.resize {
+  margin-left: 50%;
+  max-width:50%;
+  max-height:50%;
+}
 
 .colorRed {
   color: red; 
@@ -29,8 +34,8 @@ body {
   font-size: 1.23em;
 }
 
-.blog-post {
-  font-size: 1.1em;
+.description {
+  font-size: 1.1em !important;
   line-height: 1.7;
   text-align: justify;
 }

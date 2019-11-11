@@ -128,9 +128,8 @@ router.post('/register', (req, res) => {
 
           newUser.save((err) => {
             if (err) res.redirect('/login');
-
             passport.authenticate('local')(req, res, () => {
-              return res.redirect('/dashboard');
+              return res.redirect('/');
             });
           });
         }
@@ -141,7 +140,7 @@ router.post('/register', (req, res) => {
 // POST /users/login
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', {
-    successRedirect: '/dashboard',
+    successRedirect: '/',
     failureRedirect: '/users/login',
     failureFlash: true,
   })(req, res, next);
