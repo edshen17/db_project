@@ -14,7 +14,7 @@ const {
 } = require('../config/auth');
 const {
   ObjectId,
-} = require('mongoose').Types;
+} = require('mongoose').Types.ObjectId;
 
 
 // Accesses the id param and searches posts by id
@@ -151,6 +151,29 @@ router.get('/logout', (req, res) => {
   req.logout();
   res.status(301).redirect('/users/login');
 });
+
+
+
+// POST /users/:userId/item/:itemId
+// route for users to update their shopping carts
+router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
+  let item = new ObjectId(req.params.itemId);  
+  User
+  .findById(req.params.userId)
+  .then(user => {
+    for (let i = 0; i < req.body.quantity; i++) {
+      user.cart.push(item);
+    }
+    user.save();    
+  })
+  .catch(err => {
+    console.error(err)
+  });
+});
+
+
+
+
 
 // GET /users/:username
 // Route for getting a specific user's review profile

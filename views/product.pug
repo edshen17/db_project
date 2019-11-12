@@ -18,7 +18,7 @@ block content
                         .flex-column
                             h4 $#{item.price}
                             span.badge.badge-info.badge-pill  #{item.stock} left in stock
-                            form(action='/items/' + item._id, method='POST')
+                            form(action='/users/' + user._id + '/item/' + item._id, method='POST')
                                     .form-group.form
                                         label(for='quantity')
                                             | Quantity:
@@ -26,8 +26,12 @@ block content
                                                 each number in quantity
                                                     if number < 30
                                                         option.form-control(value= number+1) #{number+1}
-                                    button.btn.btn-primary.btn-block(type='submit')
-                                        | Add to cart
+                                    if user
+                                        button.btn.btn-primary.btn-block(type='submit')
+                                            | Add to cart
+                                    else
+                                        a.btn.btn-primary(href='/users/login', role='button') Log in to purchase
+
                             
 
 
