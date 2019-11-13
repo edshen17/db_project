@@ -67,6 +67,7 @@ const ItemSchema = new Schema({
   createdAt: {type: Date, default: Date.now, required: false},
   lastEditedAt: {type: Date, default: Date.now, required: false},
   reviews: [ReviewSchema],
+  category: {type: String, default: 'Computer Parts', required: true}
 });
 
 

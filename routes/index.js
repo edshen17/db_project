@@ -46,10 +46,14 @@ router.get('/item/:id', (req, res, next) => {
     .exec((err, items) => {
       if (err) return next(err);
       const title = items[0].itemName;
+      let userId;
+      if (req.user) userId = req.user._id;
+      else userId = 0;
       return res.render('product', {
         title,
         item: items[0],
         quantity: Array.from(Array(items[0].stock).keys()),
+        userId: userId,
       });
     });
 });
@@ -64,9 +68,6 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
     username,
   });
 });
-
-
-
 
 
 module.exports = router;

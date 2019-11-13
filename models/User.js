@@ -38,12 +38,12 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
   cart: {
-    type: [Item],
+    type: [{ type : mongoose.Schema.Types.ObjectId, ref: 'Item' }],
     default: [],
     required: false,
   },
   purchaseHistory: {
-    type: [Item],
+    type: [{ type : mongoose.Schema.Types.ObjectId, ref: 'Item' }],
     default: [],
     required: false,
   },
@@ -54,7 +54,7 @@ const UserSchema = new mongoose.Schema({
   },
   reviews: {
     type: [Review],
-    default: [],
+    default: [{ type : mongoose.Schema.Types.ObjectId, ref: 'Review' }],
     required: false,
   },
 });
