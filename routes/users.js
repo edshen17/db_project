@@ -174,42 +174,28 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
 
 
 
-
 // GET /users/:username
-// Route for getting a specific user's review profile
-router.get('/:username', (req, res, next) => {
-  User.find({
-    username: req.params.username,
-  }, 'bio username imageURL')
-    .exec((err, users) => {
-      if (err) return next(err);
-      if (users.length === 0) {
-        const error = new Error('User does not exist');
-        error.status = 404;
-        return next(error);
-      }
-      let loggedUser = null;
-      const bio = users[0].bio;
-      const username = req.params.username;
-
-      if (req.user) { // if user is logged in, use session var to create a client-side user object (omitting email/password)           
-        const imageURL = req.user.imageURL;
-        const bio = req.user.bio;
-        const _id = req.user.id;
-        const username = req.user.username;
-        loggedUser = {
-          imageURL,
-          bio,
-          _id,
-          username,
-        };
-      }
-      return res.render('profile', {
-        username,
-        bio,
-        loggedUser,
+// Route for getting a specific user's cart
+router.get('/:username/cart', (req, res, next) => {
+  
+  let itemCart = [];
+  User
+  .findById(req.params.username)
+  .then(user => {
+    for (let i = 0; i < user.cart.length; i++) {
+      let itemId = user.cart[i];
+      Item.findById(itemId).then(item => {
+        itemCart.push(item);
       });
-    });
+    }
+    console.log(itemCart);
+
+  })
+  .catch(err => {
+    console.error(err)
+  });
+
+  
 });
 
 // POST /users/:username/
@@ -263,146 +249,4 @@ router.get('/:username/posts/:id', (req, res) => {
   res.send(req.post);
 });
 
-// POST /users/:username/posts
-// Route for creating a post
-router.post('/:username/posts', (req, res, next) => {
-  const postedBy = req.params.username;
-  const title = req.body.title;
-  const content = req.body.content;
-  const post = new Post({
-    postedBy,
-    title,
-    content,
-  });
-
-  post.save((err) => {
-    if (err) return next(err);
-    res.status(201).redirect(`/users/${postedBy}`);
-  });
-});
-
-// POST /users/:username/posts
-// Route for liking/unliking a post
-router.post('/:username/posts/:id/like', (req, res, next) => {
-  Post.findById(req.params.id, (err, post) => {
-    if (err) return next(err);
-    post.likedBy = req.body.likedBy;
-    post.save(() => {
-      if (err) return next(err);
-      res.status(200).send(post);
-    });
-  });
-});
-
-// DELETE /users/:username/posts/:id/
-// Route for deleting a specific post
-router.delete('/:username/posts/:id', (req, res, next) => {  
-  req.post.remove(() => {
-    var id = req.params.id;
-    Comment.deleteMany({ parentID: id }, (err) => { // deletes all comments in the post as well
-      if (err) return next(err);
-      req.post.save(() => {
-        res.status(200).send();
-       });
-    })
-  });
-});
-
-// POST /users/:username/posts/comment
-// Route for creating a comment for a specific post
-router.post('/:username/posts/:id/comment', (req, res, next) => {
-  if (req.body.comments) { // if we already made the comment and are updating the comments array
-    Post.findById(req.params.id, (err, post) => {
-      if (err) return next(err);
-      post.comments = req.body.comments; 
-      post.save(() => {
-        if (err) return next(err);
-        res.status(200).json(post);
-      });
-    });
-  } else { // creating a new comment
-    const parentID = req.params.id;
-    const postedBy = req.body.postedBy;
-    const content = req.body.content;
-    const comment = new Comment({
-      parentID,
-      postedBy,
-      content,
-    });
-
-    comment.save((err) => {
-      if (err) return next(err);
-      res.status(200).json(comment);
-    });
-
-    // User.find({username: req.body.postedBy.username})
-    //   .exec((err, user) => {
-    //     user.comments.push(comment); //fix
-    //     users.comment_count++;
-    //     user.save(() => {
-    //       if (err) return next(err);  
-    //     });
-    //   });
-
-    User.find({ username: req.body.postedBy.username })
-      .populate('comments')
-      .exec((err, user) => {
-        if(err) next(err);
-      });
-
-
-
-    // User.find({
-    //   username: req.params.username,
-    // })
-    //   .exec((err, user) => {
-    //     if (err) return next(err);
-    //     console.log(user);
-    //     user.comments.push(comment); //fix
-    //     user.comment_count++;
-    //     user.save(() => {
-    //       if (err) return next(err);
-    //       
-    //     });
-    //   });
-  }
-});
-
-// PUT /users/:username/posts/:id/
-// Edit a specific post
-router.put('/:username/posts/:id/', (req, res) => {
-  
-  req.answer.update(req.body, function(err, result) {
-    if (err) return next(err);
-    res.json(result);
-  });
-  // return res.json({
-  //   response: 'put request to edit a post',
-  //   postId: req.params.id,
-  //   commentId: req.params.cid,
-  //   body: req.body,
-  // });
-});
-
-// PUT /users/:username/posts/:id/:cid
-// Edit a specific comment
-// router.put('/:username/posts/:id/:cid', function(req, res, next) {
-//   return res.json({
-//     response: 'put request to edit a comment',
-//     postId: req.params.id,
-//     commentId: req.params.cid,
-//     body: req.body
-//   });
-
-// });
-
-// DELETE /users/:username/posts/:id/:cid
-// Delete a specific comment
-// router.delete('/:username/posts/:id/:cid', function(req, res, next) {
-//   return res.json({
-//     response: 'DELETE request to delete a comment',
-//     postId: req.params.id,
-//     commentId: req.params.cid
-//   });
-// });
 module.exports = router;

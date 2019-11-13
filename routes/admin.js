@@ -22,7 +22,7 @@ router.get('/dashboard', (req, res) => {
   });
 
 // GET /supplier
-router.get('/create-supplier', (req, res) => {
+router.get('/create-supplier', ensureAuthenticated, (req, res) => {
     const title = 'Admin | Supplier';
     return res.render('supplier', {
       title,
@@ -73,7 +73,7 @@ router.get('/create-supplier', (req, res) => {
 
 
   // GET /admin/item
-router.get('/create-item', (req, res) => {
+router.get('/create-item', ensureAuthenticated, (req, res) => {
   const title = 'Admin | Item';
   return Supplier.find().lean().then(suppliers => { // get all the suppliers
     return res.render('item', {
