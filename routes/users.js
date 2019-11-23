@@ -179,21 +179,21 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
 router.get('/:username/cart', (req, res, next) => {
   
   let itemCart = [];
-  User
-  .findById(req.params.username)
-  .then(user => {
-    for (let i = 0; i < user.cart.length; i++) {
-      let itemId = user.cart[i];
-      Item.findById(itemId).then(item => {
-        itemCart.push(item);
-      });
-    }
-    console.log(itemCart);
+User
+.findById(req.params.username)
+.then(async user => {
+ for (let i = 0; i < user.cart.length; i++) {
+  let itemId = user.cart[i];
+  let item = await Item.findById(itemId);
+   itemCart.push(item);
+  }
+  
+  res.json(itemCart);
 
   })
   .catch(err => {
-    console.error(err)
-  });
+   console.error(err)
+   });
 
   
 });

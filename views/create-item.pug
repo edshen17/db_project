@@ -15,6 +15,12 @@ block content
                 select(name='supplier')
                     each supplier in supplierList
                         option.form-control(value= supplier.supplierName) #{supplier.supplierName}
+          .form-group.form
+            label(for='supplier')
+                | Category
+                select(name='category')
+                    each category in categoryList
+                        option.form-control(value= category.categoryName) #{category.categoryName}
           .form-group
             label(for='itemName') Item Name
             input.form-control(type='text', name='itemName', value=(itemName) required)

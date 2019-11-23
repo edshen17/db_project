@@ -28,6 +28,7 @@ html(lang='en')
             if user.isAdmin
               a.nav-item.nav-link(class=(title === "Add Item" ? "active" : undefined) href='/admin/create-item') Add Item
               a.nav-item.nav-link(class=(title === "Add Supplier" ? "active" : undefined) href='/admin/create-supplier') Add Supplier
+              a.nav-item.nav-link(class=(title === "Add Category" ? "active" : undefined) href='/admin/create-category') Add Category
             a.nav-item.nav-link(href='/users/logout') Log Out
     block content  
     script(src='https://code.jquery.com/jquery-3.2.1.slim.min.js', integrity='sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN', crossorigin='anonymous')

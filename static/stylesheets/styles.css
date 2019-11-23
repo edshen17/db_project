@@ -16,8 +16,20 @@ img.resize {
   max-height:50%;
 }
 
+.card-img-top {
+  width:  600px !important;
+  height: 350px !important;
+  background-position: 50% 50%;
+  background-repeat:   no-repeat;
+  background-size:     cover;
+}
+
 .colorRed {
   color: red; 
+}
+
+a {
+  color:black !important;
 }
 
 body {
@@ -42,7 +54,9 @@ body {
 
 .center {
   margin: auto;
-  width: 50%;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  font-size: 1.7em;
   text-align: center;
 }
 

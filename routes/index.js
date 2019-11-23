@@ -19,7 +19,7 @@ router.get('*', (req, res, next) => {
 });
 
 // GET /
-// Route for getting all the items
+// Route for the index page
 router.get('/', (req, res, next) => {
   Item.find({})
     .sort({
@@ -35,6 +35,23 @@ router.get('/', (req, res, next) => {
     });
 });
 
+// GET /item/:category
+// Route for getting items in a specific category
+router.get('/listings/:category', (req, res, next) => {
+  Item.find({category: req.params.category})
+    .sort({
+      price: -1,
+    })
+    .exec((err, items) => {
+      console.log(items);
+      if (err) return next(err);
+      const title = 'Home';
+      return res.render('listings', {
+        title,
+        items,
+      });
+    });
+});
 
 // GET /item/:id
 // Route for getting a specific item

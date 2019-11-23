@@ -1,0 +1,20 @@
+extends layout
+
+block content
+    .container-fluid
+      .row
+        .col-2
+        .col-8
+          ul.list-group
+            each item in items
+              a.list-group-item.list-group-item-action.d-flex.justify-content-between.align-items-center(href='/item/' + item._id)
+                .flex-column
+                  h4 #{item.itemName}
+                  p $#{item.price} | #{item.supplier}
+                  span.badge.badge-info.badge-pill  #{item.stock} left in stock
+                .image-parent
+                  img.img-thumbnail.resize(src='' + item.itemImageURL, alt='' + item.itemName)
+        .col-2
+    footer.pt-5.footer.mx-3
+      hr
+      p 	&copy; Edwin Shen

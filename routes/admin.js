@@ -7,6 +7,9 @@ const {
   Supplier,
 } = require('../models/Item');
 const {
+  Category,
+} = require('../models/Category');
+const {
   ensureAuthenticated,
 } = require('../config/auth');
 const {
@@ -16,7 +19,7 @@ const {
 // GET /dashboard
 router.get('/dashboard', (req, res) => {
     const title = 'Admin | Dashboard';
-    return res.render('supplier', {
+    return res.render('create-supplier', {
       title,
     });
   });
@@ -24,10 +27,53 @@ router.get('/dashboard', (req, res) => {
 // GET /supplier
 router.get('/create-supplier', ensureAuthenticated, (req, res) => {
     const title = 'Admin | Supplier';
-    return res.render('supplier', {
+    return res.render('create-supplier', {
       title,
     });
   });
+
+// GET /category
+router.get('/create-category', ensureAuthenticated, (req, res) => {
+  const title = 'Admin | Category';
+  return res.render('create-category', {
+      title,
+  });
+});
+
+
+  // POST /
+  // Route to create a new category 
+  router.post('/create-category', (req, res) => {
+    const errors = [];
+    const {
+      categoryName,
+    } = req.body;
+
+    Category.findOne({
+        categoryName,
+      })
+        .then((category) => {
+          if (category) {
+            errors.push({
+              msg: 'A supplier with that name already exists',
+            });
+            res.render('create-category', {
+                errors,
+                categoryName,
+              });
+          } else {
+            const newCategory = new Category({
+                categoryName: req.body.categoryName,
+            });
+  
+            newCategory.save((err) => {
+              if (err) res.redirect('/create-category');
+              return res.redirect('/');
+            });
+          }
+        });
+  });
+
   
   // POST /
   // Route to create a new supplier 
@@ -48,7 +94,7 @@ router.get('/create-supplier', ensureAuthenticated, (req, res) => {
             errors.push({
               msg: 'A supplier with that name already exists',
             });
-            res.render('supplier', {
+            res.render('create-supplier', {
                 errors,
                 supplierName,
                 supplierCity,
@@ -64,7 +110,7 @@ router.get('/create-supplier', ensureAuthenticated, (req, res) => {
             });
   
             newSupplier.save((err) => {
-              if (err) res.redirect('/supplier');
+              if (err) res.redirect('/create-supplier');
               return res.redirect('/dashboard');
             });
           }
@@ -76,9 +122,12 @@ router.get('/create-supplier', ensureAuthenticated, (req, res) => {
 router.get('/create-item', ensureAuthenticated, (req, res) => {
   const title = 'Admin | Item';
   return Supplier.find().lean().then(suppliers => { // get all the suppliers
-    return res.render('item', {
-      supplierList: suppliers,
-      title: title,
+    return Category.find().lean().then(categories => {
+      return res.render('create-item', {
+        supplierList: suppliers,
+        categoryList: categories,
+        title: title,
+      });
     });
   }); 
 });
@@ -89,6 +138,7 @@ router.post('/create-item', (req, res) => {
   const errors = [];
   const {
     supplierName,
+    categoryName,
     itemName,
     price,
     itemDescription,
@@ -107,6 +157,7 @@ router.post('/create-item', (req, res) => {
           return res.render('item', {
             errors,
             supplierList: suppliers,
+            categoryList: categories,
             supplier: req.body.supplier,
             itemName: req.body.itemName,
             price: req.body.price,
@@ -116,6 +167,7 @@ router.post('/create-item', (req, res) => {
           });
         }); 
       } else {
+        
         const newItem = new Item({
             supplier: req.body.supplier,
             itemName: req.body.itemName,
@@ -123,6 +175,7 @@ router.post('/create-item', (req, res) => {
             itemDescription: itemDescription,
             itemImageURL: req.body.itemImageURL,
             stock: req.body.stock,
+            category: req.body.category,
         });
         newItem.save((err) => {
           if (err) next(err);
