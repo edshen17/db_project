@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
@@ -99,8 +98,8 @@ router.post('/register', (req, res) => {
   } else {
     // Validation
     User.findOne({
-      email,
-    })
+        email,
+      })
       .then((user) => {
         if (user) {
           // user exists
@@ -157,18 +156,18 @@ router.get('/logout', (req, res) => {
 // POST /users/:userId/item/:itemId
 // route for users to update their shopping carts
 router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
-  let item = new ObjectId(req.params.itemId);  
+  let item = new ObjectId(req.params.itemId);
   User
-  .findById(req.params.userId)
-  .then(user => {
-    for (let i = 0; i < req.body.quantity; i++) {
-      user.cart.push(item);
-    }
-    user.save();    
-  })
-  .catch(err => {
-    console.error(err)
-  });
+    .findById(req.params.userId)
+    .then(user => {
+      for (let i = 0; i < req.body.quantity; i++) {
+        user.cart.push(item);
+      }
+      user.save();
+    })
+    .catch(err => {
+      console.error(err)
+    });
 });
 
 
@@ -177,33 +176,50 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
 // GET /users/:username
 // Route for getting a specific user's cart
 router.get('/:username/cart', (req, res, next) => {
-  
   let itemCart = [];
-User
-.findById(req.params.username)
-.then(async user => {
- for (let i = 0; i < user.cart.length; i++) {
-  let itemId = user.cart[i];
-  let item = await Item.findById(itemId);
-   itemCart.push(item);
-  }
-  
-  res.json(itemCart);
+  User
+    .findById(req.params.username)
+    .then(async user => {
 
-  })
-  .catch(err => {
-   console.error(err)
-   });
+      itemIdAndQuantity = {}
+      user.cart.forEach(item => { // count the unique items in the cart
+        var key = item;
+        itemIdAndQuantity[key] = (itemIdAndQuantity[key] || 0) + 1;
+      });
 
-  
+      for (let key in itemIdAndQuantity) { // for each key in the itemId/quantity object
+        if (itemIdAndQuantity.hasOwnProperty(key)) {
+          let item = await Item.findById(key); // get the item data
+          let condensedItemData = { // create object with needed information
+            itemName: item.itemName,
+            itemImageURL: item.itemImageURL,
+            price: item.price,
+            inStock: item.stock > 0,
+            quantityToBuy: itemIdAndQuantity[key],
+          }
+          itemCart.push(condensedItemData);
+        }
+      }
+
+      return res.render('cart', {
+        title: 'My Cart',
+        itemCart,
+      });
+
+    })
+    .catch(err => {
+      console.error(err)
+    });
+
+
 });
 
 // POST /users/:username/
 // Route for editing a user's profile information
 router.post('/:username', (req, res, next) => {
   User.find({
-    username: req.params.username,
-  })
+      username: req.params.username,
+    })
     .exec((err, user) => {
       if (err) return next(err);
       user.bio = req.body.bio;
@@ -219,8 +235,8 @@ router.post('/:username', (req, res, next) => {
 // Route for getting a specific user's json data
 router.get('/:username/json', (req, res, next) => {
   User.find({
-    username: req.params.username,
-  }, 'bio username imageURL')
+      username: req.params.username,
+    }, 'bio username imageURL')
     .exec((err, user) => {
       if (err) return next(err);
       return res.status(200).json(user);
@@ -231,8 +247,8 @@ router.get('/:username/json', (req, res, next) => {
 // Route for getting all the posts of a user in json
 router.get('/:username/posts', (req, res, next) => {
   Post.find({
-    postedBy: req.params.username,
-  })
+      postedBy: req.params.username,
+    })
     .sort({
       createdAt: -1,
     })

@@ -43,7 +43,6 @@ router.get('/listings/:category', (req, res, next) => {
       price: -1,
     })
     .exec((err, items) => {
-      console.log(items);
       if (err) return next(err);
       const title = 'Home';
       return res.render('listings', {
