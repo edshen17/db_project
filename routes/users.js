@@ -173,9 +173,9 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
 
 
 
-// GET /users/:username
+// GET /users/:cart
 // Route for getting a specific user's cart
-router.get('/:username/cart', (req, res, next) => {
+router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
   let itemCart = [];
   User
     .findById(req.params.username)
@@ -195,12 +195,15 @@ router.get('/:username/cart', (req, res, next) => {
             itemImageURL: item.itemImageURL,
             price: item.price,
             inStock: item.stock > 0,
+            stock: item.stock,
             quantityToBuy: itemIdAndQuantity[key],
           }
+          console.log(typeof condensedItemData.quantityToBuy)
           itemCart.push(condensedItemData);
         }
       }
 
+      
       return res.render('cart', {
         title: 'My Cart',
         itemCart,
