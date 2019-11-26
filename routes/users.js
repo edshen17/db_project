@@ -154,7 +154,7 @@ router.get('/logout', (req, res) => {
 
 
 // POST /users/:userId/item/:itemId
-// route for users to update their shopping carts
+// route for users to add an item to their shopping carts
 router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
   let item = new ObjectId(req.params.itemId);
   User
@@ -166,10 +166,37 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
       user.save();
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
     });
 });
 
+// POST /users/:userId/item/:itemId/:quantity
+// route for users to update a specific item in their shopping carts (quantity)
+router.get('/:userId/item/:itemId/:quantity', (req, res) => {
+  let item = new ObjectId(req.params.itemId);
+  User
+    .findById(req.params.userId)
+    .then(user => {
+      
+      let itemArray = user.cart.filter(i => JSON.stringify(i) === JSON.stringify(item));
+      if (req.params.quantity > itemArray.length) {
+        for (let i = 0; i < req.params.quantity - itemArray.length; i++) { // if the new quantity to be bought > size of current items to be bought
+          user.cart.push(item);
+        }
+
+      } else if (req.params.quantity < itemArray.length) {
+        for (let i = 0; i < itemArray.length - req.params.quantity; i++) { // if the new quantity to be bought > size of current items to be bought
+          
+        }
+      }
+      console.log(itemArray);
+
+      // user.save();
+    })
+    .catch(err => {
+      console.error(err);
+    });
+});
 
 
 
@@ -217,55 +244,6 @@ router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
 
 });
 
-// POST /users/:username/
-// Route for editing a user's profile information
-router.post('/:username', (req, res, next) => {
-  User.find({
-      username: req.params.username,
-    })
-    .exec((err, user) => {
-      if (err) return next(err);
-      user.bio = req.body.bio;
-      user.save(() => {
-        if (err) return next(err);
-        res.status(200).send(user);
-      });
-    });
-});
 
-
-// GET /users/:username/json
-// Route for getting a specific user's json data
-router.get('/:username/json', (req, res, next) => {
-  User.find({
-      username: req.params.username,
-    }, 'bio username imageURL')
-    .exec((err, user) => {
-      if (err) return next(err);
-      return res.status(200).json(user);
-    });
-});
-
-// GET /users/:username/posts
-// Route for getting all the posts of a user in json
-router.get('/:username/posts', (req, res, next) => {
-  Post.find({
-      postedBy: req.params.username,
-    })
-    .sort({
-      createdAt: -1,
-    })
-    .exec((err, posts) => {
-      if (err) return next(err);
-      res.status(200).json(posts);
-    });
-});
-
-
-// GET /users/:username/posts/:id
-// Route for getting a specific post
-router.get('/:username/posts/:id', (req, res) => {
-  res.send(req.post);
-});
 
 module.exports = router;

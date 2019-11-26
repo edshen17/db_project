@@ -15,7 +15,7 @@ block content
                     span.badge.badge-info.badge-pill  In stock
                   else 
                     span.badge.badge-info.badge-pill  Out of stock
-                  form(action='/users/' + userId + '/item/' + item._id, method='POST')
+                  form(action='/users/' + userId + '/item/' + item._id, method='POST' onchange='alert("hi")')
                     label(for='quantity')
                         | Quantity:
                         select(name='quantity')
