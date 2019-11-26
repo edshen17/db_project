@@ -170,28 +170,29 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
     });
 });
 
-// POST /users/:userId/item/:itemId/:quantity
+// PUT /users/:userId/item/:itemId/:quantity
 // route for users to update a specific item in their shopping carts (quantity)
-router.get('/:userId/item/:itemId/:quantity', (req, res) => {
+router.put('/:userId/item/:itemId/:quantity', (req, res) => {
   let item = new ObjectId(req.params.itemId);
   User
     .findById(req.params.userId)
     .then(user => {
       
       let itemArray = user.cart.filter(i => JSON.stringify(i) === JSON.stringify(item));
+      let restItemArray = user.cart.filter(i => JSON.stringify(i) != JSON.stringify(item));
       if (req.params.quantity > itemArray.length) {
         for (let i = 0; i < req.params.quantity - itemArray.length; i++) { // if the new quantity to be bought > size of current items to be bought
           user.cart.push(item);
         }
 
       } else if (req.params.quantity < itemArray.length) {
-        for (let i = 0; i < itemArray.length - req.params.quantity; i++) { // if the new quantity to be bought > size of current items to be bought
-          
+        let itemsToRemove = itemArray.length - req.params.quantity        
+        for (let i = 0; i < itemsToRemove; i++) { // if the new quantity to be bought < size of current items to be bought
+          itemArray.pop();
         }
+        user.cart = restItemArray.concat(itemArray);
       }
-      console.log(itemArray);
-
-      // user.save();
+      user.save();
     })
     .catch(err => {
       console.error(err);
@@ -218,6 +219,7 @@ router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
         if (itemIdAndQuantity.hasOwnProperty(key)) {
           let item = await Item.findById(key); // get the item data
           let condensedItemData = { // create object with needed information
+            _id: item._id,
             itemName: item.itemName,
             itemImageURL: item.itemImageURL,
             price: item.price,
@@ -225,7 +227,6 @@ router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
             stock: item.stock,
             quantityToBuy: itemIdAndQuantity[key],
           }
-          console.log(typeof condensedItemData.quantityToBuy)
           itemCart.push(condensedItemData);
         }
       }
@@ -234,6 +235,7 @@ router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
       return res.render('cart', {
         title: 'My Cart',
         itemCart,
+        userId: user._id,
       });
 
     })

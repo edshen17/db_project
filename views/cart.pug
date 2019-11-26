@@ -11,26 +11,50 @@ block content
                 .flex-column
                   h4 #{item.itemName}
                   p $#{item.price}
+                  p #{item._id}
                   if item.inStock
                     span.badge.badge-info.badge-pill  In stock
                   else 
                     span.badge.badge-info.badge-pill  Out of stock
-                  form(action='/users/' + userId + '/item/' + item._id, method='POST' onchange='alert("hi")')
-                    label(for='quantity')
+                  form(action='/users/' + userId + '/item/' + item._id, method='POST')
+                    label(for=item._id)
                         | Quantity:
-                        select(name='quantity')
-                          - for(let i = 1; i <= item.stock; i++)
-                            if i === item.quantityToBuy
-                              option.form-control(value=i selected) #{i}
-                            else 
-                              option.form-control(value=i) #{i}
+                        select(name=item._id)
+                          if item.quantityToBuy < item.stock
+                            - for(let i = 1; i <= item.stock; i++)
+                              if i === item.quantityToBuy
+                                option.form-control(value=i selected) #{i}
+                              else 
+                                option.form-control(value=i) #{i}
+                          else
+                            - for(let i = 1; i <= item.quantityToBuy; i++)
+                              if i === item.quantityToBuy
+                                option.form-control(value=i selected) #{i}
+                              else 
+                                option.form-control(value=i) #{i}
                             
                 .image-parent
                   img.img-thumbnail.resize(src='' + item.itemImageURL, alt='' + item.itemName)
         .col-2
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
         script.
           let itemCart = JSON.parse('!{JSON.stringify(itemCart)}');
-          alert(itemCart)
+          let userId = JSON.parse('!{JSON.stringify(userId)}');
+          $(function() {
+              $('select').change(function() {
+                  let $itemValue = $(this).val();
+                  let $itemId = $(this).attr('name');
+                  console.log($itemValue + " " + $itemId)
+                  //- $.ajax({
+                  //-     url: `/users/${userId}/item/${$itemId}/${$itemValue}`,
+                  //-     type: 'PUT',
+                  //-     success: function(result) {
+                  //-         // Do something with the result
+                  //-     }
+                  //- });
+              });
+          });
     footer.pt-5.footer.mx-3
       hr
       p 	&copy; Edwin Shen
