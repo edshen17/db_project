@@ -8,9 +8,8 @@ block content
             each item in itemCart
               .list-group-item.list-group-item-action.d-flex.justify-content-between.align-items-center
                 .flex-column
-                  h4 #{item.itemName}
+                  a(href='/item/' + item._id) #[strong #{item.itemName}]
                   p $#{item.price}
-                  p #{item._id}
                   if item.inStock
                     span.badge.badge-info.badge-pill  In stock
                   else 
@@ -31,7 +30,7 @@ block content
                                 option.form-control(value=i selected) #{i}
                               else 
                                 option.form-control(value=i) #{i}
-                  a(href='test' class='delete') Delete
+                  a(data-method="delete" href='/users/' + userId + '/item/' + item._id + '/delete' class='delete') Delete
 
                             
                 .image-parent
@@ -42,7 +41,7 @@ block content
                   .flex-column
                       form(action='/users/' + userId + '/item/', method='POST')
                         if userId
-                            h3#subtotal Subtotal (#{userCartLength} items): $#{subtotal}
+                            h3#subtotal Subtotal (#{userCartLength} item(s)): $#{subtotal}
                             button.btn.btn-primary.btn-block(type='submit')
                                 | Purchase items
                         else
@@ -53,19 +52,24 @@ block content
           let itemCart = JSON.parse('!{JSON.stringify(itemCart)}');
           let userId = JSON.parse('!{JSON.stringify(userId)}');
           $(function() { // listens for a change when the user changes value in the select form and updates the db
-            console.log(itemCart)
               $('select').change(function() {
-                  let $itemValue = $(this).val();
+                  let $itemQuantity = $(this).val();
                   let $itemId = $(this).attr('name');
                   let $oldSubtotal = $('#subtotal').text();
-                  console.log($oldSubtotal)
                   $.ajax({
-                      url: `/users/${userId}/item/${$itemId}/${$itemValue}`,
+                      url: `/users/${userId}/item/${$itemId}/${$itemQuantity}`,
                       type: 'PUT',
-                  });
-                  //- $('#subtotal').text("hi") 
+                  }).done(updateSubtotal());
               });
           });
+
+          function updateSubtotal() {
+            setTimeout(function() { // set timeout so the request's json is up to date (rather than getting the old data values)
+              $.getJSON( `/users/${userId}/cart/json`, function( data ) {
+                  $('#subtotal').text(`Subtotal (${data.userCartLength} item(s)): $${data.subtotal}`);
+                  });
+            }, 50)
+          }
     footer.pt-5.footer.mx-3
       hr
       p 	&copy; Edwin Shen

@@ -170,6 +170,23 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
     });
 });
 
+
+// delete /users/:userId/item/:itemId/:quantity
+// route to delete an item in a cart
+router.delete('/:userId/item/:itemId/delete', (req, res) => {
+  let item = new ObjectId(req.params.itemId);
+  User
+    .findById(req.params.userId)
+    .then(user => {
+      let restItemArray = user.cart.filter(i => JSON.stringify(i) != JSON.stringify(item));
+      user.cart = restItemArray;
+      user.save();
+    })
+    .catch(err => {
+      console.error(err);
+    });
+});
+
 // PUT /users/:userId/item/:itemId/:quantity
 // route for users to update a specific item in their shopping carts (quantity)
 router.put('/:userId/item/:itemId/:quantity', (req, res) => {
