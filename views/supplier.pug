@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  .row.mt-5
+    .col-md-6.m-auto
+      .card.card-body
+        h1.text-center.mb-3
+          i.fas.fa-user-plus
+          |  Add a supplier
+          include ./partials/messages
+        form(action='/admin/create-supplier', method='POST')
+          .form-group
+            label(for='supplierName') Supplier Name
+            input.form-control(type='text', name='supplierName', value=(supplierName) required)
+          .form-group
+            label(for='supplierCity') Supplier HQ City
+            input.form-control(type='text', name='supplierCity', value=(supplierCity) required)
+          .form-group
+            label(for='supplierState') Supplier State
+            input.form-control(type='text', name='supplierState', value=(supplierState) required)
+          .form-group
+            label(for='supplierPhone') Supplier Phone
+            input.form-control(type='tel', pattern="[0-9\-]+" name='supplierPhone', value=(supplierPhone) required)
+          button.btn.btn-primary.btn-block(type='submit')
+            | Create supplier

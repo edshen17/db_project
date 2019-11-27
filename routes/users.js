@@ -177,7 +177,7 @@ router.put('/:userId/item/:itemId/:quantity', (req, res) => {
   User
     .findById(req.params.userId)
     .then(user => {
-      
+
       let itemArray = user.cart.filter(i => JSON.stringify(i) === JSON.stringify(item));
       let restItemArray = user.cart.filter(i => JSON.stringify(i) != JSON.stringify(item));
       if (req.params.quantity > itemArray.length) {
@@ -186,7 +186,7 @@ router.put('/:userId/item/:itemId/:quantity', (req, res) => {
         }
 
       } else if (req.params.quantity < itemArray.length) {
-        let itemsToRemove = itemArray.length - req.params.quantity        
+        let itemsToRemove = itemArray.length - req.params.quantity
         for (let i = 0; i < itemsToRemove; i++) { // if the new quantity to be bought < size of current items to be bought
           itemArray.pop();
         }
@@ -199,16 +199,12 @@ router.put('/:userId/item/:itemId/:quantity', (req, res) => {
     });
 });
 
-
-
-// GET /users/:cart
-// Route for getting a specific user's cart
-router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
+async function getCartData(req) {
   let itemCart = [];
-  User
+  let subtotal = 0;
+  return User
     .findById(req.params.username)
     .then(async user => {
-
       itemIdAndQuantity = {}
       user.cart.forEach(item => { // count the unique items in the cart
         var key = item;
@@ -228,23 +224,56 @@ router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
             quantityToBuy: itemIdAndQuantity[key],
           }
           itemCart.push(condensedItemData);
+          subtotal += (itemIdAndQuantity[key] * item.price);
         }
       }
-
-      
-      return res.render('cart', {
-        title: 'My Cart',
-        itemCart,
-        userId: user._id,
-      });
-
+      let returnData = [];
+      returnData.push(subtotal);
+      returnData.push(user);
+      returnData.push(itemCart);
+      return returnData;
     })
     .catch(err => {
       console.error(err)
     });
+}
 
-
+// GET /users/:cart
+// Route for getting a specific user's cart
+router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
+  const cart = async () => {
+    return await getCartData(req);
+  }
+  cart().then(cartData => {
+    return res.render('cart', {
+      title: 'My Cart',
+      itemCart: cartData[2],
+      userId: cartData[1]._id,
+      userCartLength: cartData[1].cart.length,
+      subtotal: cartData[0],
+    });
+  }).catch(err => {
+    console.error(err)
+  });
 });
+
+// GET json cart data
+router.get('/:username/cart/json', (req, res, next) => {
+  const cart = async () => {
+    return await getCartData(req);
+  }
+  cart().then(cartData => {
+    return res.json({
+      itemCart: cartData[2],
+      userId: cartData[1]._id,
+      userCartLength: cartData[1].cart.length,
+      subtotal: cartData[0],
+    });
+  }).catch(err => {
+    console.error(err)
+  });
+});
+
 
 
 

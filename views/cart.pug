@@ -3,7 +3,6 @@ extends layout
 block content
     .container-fluid
       .row
-        .col-2
         .col-8
           ul.list-group
             each item in itemCart
@@ -32,27 +31,39 @@ block content
                                 option.form-control(value=i selected) #{i}
                               else 
                                 option.form-control(value=i) #{i}
+                  a(href='test' class='delete') Delete
+
                             
                 .image-parent
                   img.img-thumbnail.resize(src='' + item.itemImageURL, alt='' + item.itemName)
-        .col-2
+        .col
+          ul.list-group
+              .list-group-item.list-group-item-action.d-flex.justify-content-between.align-items-center
+                  .flex-column
+                      form(action='/users/' + userId + '/item/', method='POST')
+                        if userId
+                            h3#subtotal Subtotal (#{userCartLength} items): $#{subtotal}
+                            button.btn.btn-primary.btn-block(type='submit')
+                                | Purchase items
+                        else
+                            a.btn.btn-primary(href='/users/login', role='button') Log in to purchase
         script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
         script.
           let itemCart = JSON.parse('!{JSON.stringify(itemCart)}');
           let userId = JSON.parse('!{JSON.stringify(userId)}');
-          $(function() {
+          $(function() { // listens for a change when the user changes value in the select form and updates the db
+            console.log(itemCart)
               $('select').change(function() {
                   let $itemValue = $(this).val();
                   let $itemId = $(this).attr('name');
-                  console.log($itemValue + " " + $itemId)
-                  //- $.ajax({
-                  //-     url: `/users/${userId}/item/${$itemId}/${$itemValue}`,
-                  //-     type: 'PUT',
-                  //-     success: function(result) {
-                  //-         // Do something with the result
-                  //-     }
-                  //- });
+                  let $oldSubtotal = $('#subtotal').text();
+                  console.log($oldSubtotal)
+                  $.ajax({
+                      url: `/users/${userId}/item/${$itemId}/${$itemValue}`,
+                      type: 'PUT',
+                  });
+                  //- $('#subtotal').text("hi") 
               });
           });
     footer.pt-5.footer.mx-3
