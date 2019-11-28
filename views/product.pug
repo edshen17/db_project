@@ -23,10 +23,9 @@ block content
                                             | Quantity:
                                             select(name='quantity')
                                                 each number in quantity
-                                                    if number < 30
-                                                        option.form-control(value= number+1) #{number+1}
+                                                    option.form-control(value= number+1) #{number+1}
                                     if userId != 0
-                                        button.btn.btn-primary.btn-block(type='submit')
+                                        button.btn.btn-primary.btn-block(type='submit' onclick="location.href='/test'")
                                             | Add to cart
                                     else
                                         a.btn.btn-primary(href='/users/login', role='button') Log in to purchase
