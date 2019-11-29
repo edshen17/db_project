@@ -164,6 +164,7 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
         user.cart.push(item);
       }
       user.save();
+      res.status(301).redirect(`/item/${req.params.itemId}`);
     })
     .catch(err => {
       console.error(err);
@@ -255,7 +256,7 @@ async function getCartData(req) {
     });
 }
 
-// GET /users/:cart
+// GET /users/:username/cart
 // Route for getting a specific user's cart
 router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
   const cart = async () => {
@@ -272,6 +273,58 @@ router.get('/:username/cart', ensureAuthenticated, (req, res, next) => {
   }).catch(err => {
     console.error(err)
   });
+});
+
+
+// PUT /users/:username/cart
+// Route for buying all items in a specific user's cart
+router.put('/:username/cart/buy', ensureAuthenticated, (req, res, next) => {
+  const cart = async () => {
+    return await getCartData(req);
+  }
+
+  cart().then(cartData => {
+    const purchasedItemIds = [];
+    const unPurchasedItems = [];
+
+
+    for (let i = 0; i < cartData[2].length; i++) { 
+      let itemId = cartData[2][i]._id;
+      let itemsToBuy = cartData[2][i].quantityToBuy;
+      
+      Item.findById(itemId).then(item => { 
+        if (item.stock - itemsToBuy >= 0) { // still have inventory left after transaction
+          item.stock -= itemsToBuy
+          item.save();
+          for (let j = 0; j < itemsToBuy; j++) {
+            purchasedItemIds.push(itemId);
+          }
+        } else { // no more inventory left
+          
+          for (let j = 0; j < item.stock; j++) { // buy all the items that can be purchased 
+            purchasedItemIds.push(itemId);
+          }
+
+          for (let k = 0; k < itemsToBuy - item.stock; k++) { // store the ones that were unable to be bought in cart
+            unPurchasedItems.push(itemId);
+          }
+          
+          item.stock = 0;
+          item.save();
+        }
+      });
+
+        if (i == cartData[2].length - 1) { // create purchase history
+          User.findById(req.params.username).then(user =>{
+            user.cart = unPurchasedItems;
+            user.purchaseHistory = user.purchaseHistory.concat(purchasedItemIds);
+            user.save();
+          });
+        }
+    }
+  }).catch(err => {
+    console.log(err);
+  })
 });
 
 // GET json cart data
