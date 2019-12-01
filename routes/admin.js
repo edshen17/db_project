@@ -16,15 +16,8 @@ const {
   ObjectId,
 } = require('mongoose').Types;
 
-// GET /dashboard
-router.get('/dashboard', (req, res) => {
-    const title = 'Admin | Dashboard';
-    return res.render('create-supplier', {
-      title,
-    });
-  });
-
-// GET /supplier
+// GET /admin/supplier
+// to see the form to create a supplier
 router.get('/create-supplier', ensureAuthenticated, (req, res) => {
     const title = 'Admin | Supplier';
     return res.render('create-supplier', {
@@ -32,7 +25,8 @@ router.get('/create-supplier', ensureAuthenticated, (req, res) => {
     });
   });
 
-// GET /category
+// GET /admin/create-category
+// to see the form to create a category
 router.get('/create-category', ensureAuthenticated, (req, res) => {
   const title = 'Admin | Category';
   return res.render('create-category', {
@@ -41,7 +35,7 @@ router.get('/create-category', ensureAuthenticated, (req, res) => {
 });
 
 
-  // POST /
+  // POST /admin/create-category
   // Route to create a new category 
   router.post('/create-category', (req, res) => {
     const errors = [];
@@ -67,7 +61,7 @@ router.get('/create-category', ensureAuthenticated, (req, res) => {
             });
   
             newCategory.save((err) => {
-              if (err) res.redirect('/create-category');
+              if (err) res.redirect('/admin/create-category');
               return res.redirect('/');
             });
           }
@@ -75,7 +69,7 @@ router.get('/create-category', ensureAuthenticated, (req, res) => {
   });
 
   
-  // POST /
+  // POST /admin/create-supplier
   // Route to create a new supplier 
   router.post('/create-supplier', (req, res) => {
     const errors = [];
@@ -110,15 +104,15 @@ router.get('/create-category', ensureAuthenticated, (req, res) => {
             });
   
             newSupplier.save((err) => {
-              if (err) res.redirect('/create-supplier');
-              return res.redirect('/dashboard');
+              if (err) res.redirect('/admin/create-supplier');
+              return res.redirect('/admin/create-supplier');
             });
           }
         });
   });
 
 
-  // GET /admin/item
+// GET /admin/item
 router.get('/create-item', ensureAuthenticated, (req, res) => {
   const title = 'Admin | Item';
   return Supplier.find().lean().then(suppliers => { // get all the suppliers
@@ -132,7 +126,7 @@ router.get('/create-item', ensureAuthenticated, (req, res) => {
   }); 
 });
 
-// POST /
+// POST /create-item
 // Route to create a new item 
 router.post('/create-item', (req, res) => {
   const errors = [];
@@ -179,7 +173,7 @@ router.post('/create-item', (req, res) => {
         });
         newItem.save((err) => {
           if (err) next(err);
-           res.redirect('/dashboard');
+           res.redirect('/admin/create-item');
         });
       }
     });

@@ -26,7 +26,7 @@ block content
             input.form-control(type='text', name='itemName', value=(itemName) required)
           .form-group
             label(for='price') Price
-            input.form-control(type='number', name='price', value=(price) required)
+            input.form-control(type='number', name='price', step=".01" value=(price) required)
           .form-group
             label(for='itemDescription') Item Description
             .md-form

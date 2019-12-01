@@ -172,8 +172,8 @@ router.post('/:userId/item/:itemId/', ensureAuthenticated, (req, res) => {
 });
 
 
-// delete /users/:userId/item/:itemId/:quantity
-// route to delete an item in a cart
+// DELETE /users/:userId/item/:itemId/:quantity
+// Route to delete an item in a cart
 router.delete('/:userId/item/:itemId/delete', (req, res) => {
   let item = new ObjectId(req.params.itemId);
   User
@@ -189,7 +189,7 @@ router.delete('/:userId/item/:itemId/delete', (req, res) => {
 });
 
 // PUT /users/:userId/item/:itemId/:quantity
-// route for users to update a specific item in their shopping carts (quantity)
+// Route for users to update a specific item in their shopping carts (quantity)
 router.put('/:userId/item/:itemId/:quantity', (req, res) => {
   let item = new ObjectId(req.params.itemId);
   User
@@ -214,9 +214,11 @@ router.put('/:userId/item/:itemId/:quantity', (req, res) => {
     })
     .catch(err => {
       console.error(err);
+      return next(err);
     });
 });
 
+// Gets the cart data and returns it in a json format
 async function getCartData(req) {
   let itemCart = [];
   let subtotal = 0;
@@ -252,7 +254,8 @@ async function getCartData(req) {
       return returnData;
     })
     .catch(err => {
-      console.error(err)
+      console.error(err);
+      return next(err);
     });
 }
 
@@ -322,8 +325,11 @@ router.put('/:username/cart/buy', ensureAuthenticated, (req, res, next) => {
           });
         }
     }
+
+    res.status(301);
   }).catch(err => {
     console.log(err);
+    return next(err);
   })
 });
 
@@ -340,7 +346,8 @@ router.get('/:username/cart/json', (req, res, next) => {
       subtotal: cartData[0],
     });
   }).catch(err => {
-    console.error(err)
+    console.error(err);
+    return next(err);
   });
 });
 

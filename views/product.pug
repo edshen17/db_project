@@ -17,7 +17,7 @@ block content
                         .flex-column
                             h4 $#{item.price}
                             span.badge.badge-info.badge-pill  #{item.stock} left in stock
-                            form(action='/users/' + userId + '/item/' + item._id, method='POST' onsubmit='false')
+                            form(action='/users/' + userId + '/item/' + item._id, method='POST' onsubmit="alert('Items added to cart!')")
                                     .form-group.form
                                         label(for='quantity')
                                             | Quantity:

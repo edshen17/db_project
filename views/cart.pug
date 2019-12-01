@@ -14,7 +14,7 @@ block content
                   span.badge.badge-info.badge-pill  In stock
                 else 
                   span.badge.badge-info.badge-pill  Out of stock
-                form(action='/users/' + userId + '/item/' + item._id, method='POST')
+                form()
                   label(for=item._id)
                       | Quantity:
                       select(name=item._id)
@@ -42,7 +42,7 @@ block content
                     form
                       if userId
                           h3#subtotal Subtotal (#{userCartLength} item(s)): $#{subtotal}
-                          button.btn.btn-primary.btn-block(type='submit')
+                          a#buy.btn.btn-primary.btn-block
                               | Purchase items
                       else
                           a.btn.btn-primary(href='/users/login', role='button') Log in to purchase
@@ -70,11 +70,11 @@ block content
               }).done(reload());                
             });
 
-            $('.btn-block').click((event) => {
+            $('#buy').click(() => {
               $.ajax({ 
                 url: `/users/${userId}/cart/buy`,
                 type: 'PUT',
-              }).done(reload());                
+              }).done(reload());        
             });
 
 
@@ -82,8 +82,8 @@ block content
 
         function reload() {
           setTimeout(function() { 
-            location.reload(); //refresh the page after 100ms
-          }, 100)
+            location.reload(true); //refresh the page after 500ms
+          }, 500)
         }
 
 
@@ -92,10 +92,10 @@ block content
             $.getJSON( `/users/${userId}/cart/json`, function( data ) {
                 $('#subtotal').text(`Subtotal (${data.userCartLength} item(s)): $${data.subtotal}`);
                 });
-          }, 100)
+          }, 500)
         }
 
 
   footer.pt-5.footer.mx-3
     hr
-    p 	&copy; Edwin Shen
+    p 	&copy; Edwin S and Azad E

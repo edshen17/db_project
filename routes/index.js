@@ -75,15 +75,4 @@ router.get('/item/:id', (req, res, next) => {
 });
 
 
-// GET /dashboard
-router.get('/dashboard', ensureAuthenticated, (req, res) => {
-  const title = `${req.user.username} | Shop`;
-  const username = req.user.username;
-  return res.render('dashboard', {
-    title,
-    username,
-  });
-});
-
-
 module.exports = router;

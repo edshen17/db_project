@@ -22,6 +22,8 @@ const SupplierSchema = new Schema({
   },
 });
 
+// Reviews aren't used at all, but perhaps can be something
+// we can implement in the future (where items contain reviews, and users can post reviews)
 const ReviewSchema = new Schema({
   reviewRating: {
     type: Number,
