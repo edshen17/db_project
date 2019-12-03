@@ -18,26 +18,39 @@ const {
 
 // GET /admin/supplier
 // to see the form to create a supplier
-router.get('/create-supplier', ensureAuthenticated, (req, res) => {
+router.get('/create-supplier', ensureAuthenticated, (req, res, next) => {
+  if (req.user.isAdmin) {
     const title = 'Admin | Supplier';
     return res.render('create-supplier', {
       title,
     });
+  } else {
+    let err = new Error('Page Not Found');
+    return next(err)
+  }
+    
   });
 
 // GET /admin/create-category
 // to see the form to create a category
-router.get('/create-category', ensureAuthenticated, (req, res) => {
-  const title = 'Admin | Category';
-  return res.render('create-category', {
-      title,
-  });
+router.get('/create-category', ensureAuthenticated, (req, res, next) => {
+
+  if (req.user.isAdmin) {
+    const title = 'Admin | Category';
+    return res.render('create-category', {
+        title,
+    });
+  } else {
+    let err = new Error('Page Not Found');
+    return next(err)
+  }
+
 });
 
 
   // POST /admin/create-category
   // Route to create a new category 
-  router.post('/create-category', (req, res) => {
+  router.post('/create-category', (req, res, next) => {
     const errors = [];
     const {
       categoryName,
@@ -71,7 +84,7 @@ router.get('/create-category', ensureAuthenticated, (req, res) => {
   
   // POST /admin/create-supplier
   // Route to create a new supplier 
-  router.post('/create-supplier', (req, res) => {
+  router.post('/create-supplier', (req, res, next) => {
     const errors = [];
     const {
       supplierName,
@@ -113,22 +126,30 @@ router.get('/create-category', ensureAuthenticated, (req, res) => {
 
 
 // GET /admin/item
-router.get('/create-item', ensureAuthenticated, (req, res) => {
-  const title = 'Admin | Item';
-  return Supplier.find().lean().then(suppliers => { // get all the suppliers
-    return Category.find().lean().then(categories => {
-      return res.render('create-item', {
-        supplierList: suppliers,
-        categoryList: categories,
-        title: title,
+router.get('/create-item', ensureAuthenticated, (req, res, next) => {
+
+  if (req.user.isAdmin) {
+    const title = 'Admin | Item';
+    return Supplier.find().lean().then(suppliers => { // get all the suppliers
+      return Category.find().lean().then(categories => {
+        return res.render('create-item', {
+          supplierList: suppliers,
+          categoryList: categories,
+          title: title,
+        });
       });
-    });
-  }); 
+    }); 
+  } else {
+    let err = new Error('Page Not Found');
+    return next(err)
+  }
+
+  
 });
 
 // POST /create-item
 // Route to create a new item 
-router.post('/create-item', (req, res) => {
+router.post('/create-item', (req, res, next) => {
   const errors = [];
   const {
     supplierName,
